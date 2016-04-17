@@ -77,24 +77,28 @@ public class KeysAndMouseServer : MonoBehaviour {
 
     void OnLeftClick(RaycastHit hit)
     {
-        Renderer renderer = hit.transform.GetComponent<MeshCollider>().GetComponents<Renderer>()[0] as Renderer;
-        Vector2 uvCoords = new Vector2((int)(hit.textureCoord.x * renderer.material.mainTexture.width), (int)(hit.textureCoord.y * renderer.material.mainTexture.height));
+        if (hit.transform.name.Contains("Window"))
+        {
+            String windowName = hit.transform.name.Split(' ')[1];
+            Renderer renderer = hit.transform.GetComponent<MeshCollider>().GetComponents<Renderer>()[0] as Renderer;
+            Vector2 uvCoords = new Vector2((int)(hit.textureCoord.x * renderer.material.mainTexture.width), (int)(hit.textureCoord.y * renderer.material.mainTexture.height));
 
-        IntPtr hWind = (IntPtr)UInt32.Parse(hit.transform.name);
-        SetForegroundWindow(hWind);
+            IntPtr hWind = (IntPtr)UInt32.Parse(windowName);
+            SetForegroundWindow(hWind);
 
-        CaptureWindowFromWin capWind = hit.transform.GetComponent<CaptureWindowFromWin>();
+            CaptureWindowFromWin capWind = hit.transform.GetComponent<CaptureWindowFromWin>();
 
-        int currentCursorXpos = (int)((System.Windows.Forms.Cursor.Position.X * winInpScrRes) / SystemInformation.VirtualScreen.Width);
-        int currentCursorYpos = (int)((System.Windows.Forms.Cursor.Position.Y * winInpScrRes) / SystemInformation.VirtualScreen.Height);
+            int currentCursorXpos = (int)((System.Windows.Forms.Cursor.Position.X * winInpScrRes) / SystemInformation.VirtualScreen.Width);
+            int currentCursorYpos = (int)((System.Windows.Forms.Cursor.Position.Y * winInpScrRes) / SystemInformation.VirtualScreen.Height);
 
-        int newCursorXpos = (int)((uvCoords.x * winInpScrRes) / SystemInformation.VirtualScreen.Width);
-        int newCursorYPos = (int)(((capWind.WndHeight - uvCoords.y) * winInpScrRes) / SystemInformation.VirtualScreen.Height);
+            int newCursorXpos = (int)((uvCoords.x * winInpScrRes) / SystemInformation.VirtualScreen.Width);
+            int newCursorYPos = (int)(((capWind.WndHeight - uvCoords.y) * winInpScrRes) / SystemInformation.VirtualScreen.Height);
 
-        inputSimulator.Mouse.MoveMouseToPositionOnVirtualDesktop(newCursorXpos, newCursorYPos);
-        inputSimulator.Mouse.LeftButtonDoubleClick();
-        inputSimulator.Mouse.MoveMouseToPositionOnVirtualDesktop(currentCursorXpos, currentCursorYpos);
-        SetForegroundWindow(thisAppHandle);
+            inputSimulator.Mouse.MoveMouseToPositionOnVirtualDesktop(newCursorXpos, newCursorYPos);
+            inputSimulator.Mouse.LeftButtonDoubleClick();
+            inputSimulator.Mouse.MoveMouseToPositionOnVirtualDesktop(currentCursorXpos, currentCursorYpos);
+            SetForegroundWindow(thisAppHandle);
+        }
     }
 
     private void sendMousePress(IntPtr hWind, Vector2 position, int mouseButton, int pressType)

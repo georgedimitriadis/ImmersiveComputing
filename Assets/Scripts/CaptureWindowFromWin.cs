@@ -17,7 +17,7 @@ public class CaptureWindowFromWin : MonoBehaviour {
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
-
+    
     [StructLayout(LayoutKind.Sequential)]
     private struct RECT
     {
@@ -55,10 +55,9 @@ public class CaptureWindowFromWin : MonoBehaviour {
         WndHeight = WndRect.Bottom - WndRect.Top;
         previousWndWidth = WndWidth;
         previousWndHeight = WndHeight;
-        tex = new Texture2D(WndWidth, WndHeight, TextureFormat.RGB24, false);//RGB565
+        tex = new Texture2D(WndWidth, WndHeight, TextureFormat.RGB24, false);//RGB565 RGB24
        
         GetComponent<Renderer>().material.shader = Shader.Find("Self-Illumin/Diffuse");
-        GetComponent<Renderer>().material.shader = Shader.Find("Standard");
         float a = 1.0F;
         GetComponent<Renderer>().material.SetColor("_Color", new UnityEngine.Color(a, a, a, 1.0F));
         GetComponent<Renderer>().material.SetFloat("_Mode", 2.0f);
@@ -109,12 +108,12 @@ public class CaptureWindowFromWin : MonoBehaviour {
             if (WndWidth % 2 == 1)
                 WndWidth -= 1;
 
-            target = new Bitmap(WndWidth, WndHeight);//Format16bppRgb565
+            target = new Bitmap(WndWidth, WndHeight, System.Drawing.Imaging.PixelFormat.Format16bppRgb565);//Format16bppRgb565
 
             if (WndWidth != previousWndWidth || WndHeight != previousWndHeight)
             {
                 tex.Resize(WndWidth, WndHeight);
-                gameObject.transform.localScale = new Vector3((float)WndWidth / 1000F, 0.01F, (float)WndHeight / 1000F);
+                gameObject.transform.parent.transform.localScale = new Vector3((float)WndWidth / 1000F, (float)WndHeight / 1000F, 1.0F);
             }
             previousWndWidth = WndWidth;
             previousWndHeight = WndHeight;
@@ -177,8 +176,7 @@ public class CaptureWindowFromWin : MonoBehaviour {
        
         ms.Seek(0, SeekOrigin.Begin);
         tex.LoadImage(ms.ToArray());
-        
-        GetComponent<Renderer>().material.SetTexture(0, tex);
+		GetComponent<Renderer>().material.SetTexture("_MainTex", tex);
         target.Dispose();
         ms.Dispose();
     }

@@ -34,7 +34,7 @@ public class ClickDetector : MonoBehaviour
                 transform.SendMessage(OnRightClickMethodName, hit, SendMessageOptions.RequireReceiver);
             }    
         }
- 
+        
         // Middle click
         if (HandleMiddleClick && Input.GetMouseButtonDown(2))
         {

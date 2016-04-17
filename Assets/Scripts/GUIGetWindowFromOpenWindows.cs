@@ -100,8 +100,8 @@ public class GUIGetWindowFromOpenWindows : MonoBehaviour
         //CaptureWindowFromWin capt = plane.AddComponent<CaptureWindowFromWin>();
         //plane.AddComponent<Pickable>();
         GameObject win = Instantiate(Resources.Load("Prefabs/ControlSphere")) as GameObject;
-        GameObject view = win.transform.FindChild("MainView").gameObject;
-        view.name = window.ToString();
+        GameObject view = win.transform.FindChild("PivotPoint").FindChild("MainView").gameObject;
+        view.name = "Window " + window.ToString();
         CaptureWindowFromWin capt = view.AddComponent<CaptureWindowFromWin>();
         capt.hWnd = window;
         dropDownPanel.GetComponent<PopulateDropdownMenu>().dropDownOn = false;
